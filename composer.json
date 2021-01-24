@@ -1,5 +1,5 @@
 {
-    "name": "simbiat/AccountKeying",
+    "name": "simbiat/accountkeying",
     "type": "library",
     "keywords": ["bic","php","account","keying", "russia"],
     "description": "Library to do account keying based on logic from Central Bank of Russia",
