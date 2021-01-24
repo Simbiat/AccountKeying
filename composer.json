@@ -1,0 +1,28 @@
+{
+    "name": "simbiat/AccountKeying",
+    "type": "library",
+    "keywords": ["bic","php","account","keying", "russia"],
+    "description": "Library to do account keying based on logic from Central Bank of Russia",
+    "homepage": "https://github.com/Simbiat/AccountKeying",
+    "license": "AGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Dmitry Kustov",
+            "email": "simbiat@outlook.com",
+            "homepage": "https://simbiat.ru",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "AccountKeying\\": "src/"
+        }
+    },
+	"support": {
+		"issues": "https://github.com/Simbiat/AccountKeying/issues",
+		"source": "https://github.com/Simbiat/AccountKeying"
+	}
+}
