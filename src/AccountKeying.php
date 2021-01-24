@@ -6,6 +6,13 @@ class AccountKeying
 {    
     public function accCheck(string $newnum, string $account, $bic_check = null): bool
     {
+        #Validate values
+        if (preg_match('/^[0-9]{9}$/', $newnum) !== 1) {
+            throw new \UnexpectedValueException('Wrong BIC format provided');
+        }
+        if (preg_match('/^[0-9АВСЕНКМРТХавсенкмртх]{20}$/', $account) !== 1) {
+            throw new \UnexpectedValueException('Wrong account format provided');
+        }
         $VK = [7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1];
         $rkcNum = [];
         $fullStr = [];
@@ -16,27 +23,28 @@ class AccountKeying
         $account_split = str_split(strtoupper($account));
         #Get current key
         $currKey = $account_split[8];
+        #Some special accounts can have letters in them (although I have not seen any myself)
         switch($account_split[5]) {
-            case 'A':$account_split[5]=0;break;
-            case 'B':$account_split[5]=1;break;
-            case 'C':$account_split[5]=2;break; 
-            case 'E':$account_split[5]=3;break;
-            case 'H':$account_split[5]=4;break;
-            case 'K':$account_split[5]=5;break; 
-            case 'M':$account_split[5]=6;break;
-            case 'P':$account_split[5]=7;break;
-            case 'T':$account_split[5]=8;break;
-            case 'X':$account_split[5]=9;break; 
+            case 'A': $account_split[5] = 0; break;
+            case 'B': $account_split[5] = 1; break;
+            case 'C': $account_split[5] = 2; break; 
+            case 'E': $account_split[5] = 3; break;
+            case 'H': $account_split[5] = 4; break;
+            case 'K': $account_split[5] = 5; break; 
+            case 'M': $account_split[5] = 6; break;
+            case 'P': $account_split[5] = 7; break;
+            case 'T': $account_split[5] = 8; break;
+            case 'X': $account_split[5] = 9; break; 
         }
         #RKC
-        if((int)($newnum_split[6].$newnum_split[7].$newnum_split[8]) <= 2) {
-            $rkcNum[0]=0;
-            $rkcNum[1]=(int)$newnum_split[4];
-            $rkcNum[2]=(int)$newnum_split[5];
+        if(intval($newnum_split[6].$newnum_split[7].$newnum_split[8]) <= 2) {
+            $rkcNum[0] = 0;
+            $rkcNum[1] = intval($newnum_split[4]);
+            $rkcNum[2] = intval($newnum_split[5]);
         } else {
-            $rkcNum[0]=(int)$newnum_split[6];
-            $rkcNum[1]=(int)$newnum_split[7];
-            $rkcNum[2]=(int)$newnum_split[8];
+            $rkcNum[0] = intval($newnum_split[6]);
+            $rkcNum[1] = intval($newnum_split[7]);
+            $rkcNum[2] = intval($newnum_split[8]);
         }
         if (is_null($bic_check)) {
             $account_split[8] = 0;
@@ -45,17 +53,17 @@ class AccountKeying
         $fullStr = array_merge($rkcNum, $account_split);
         #Multiplication
         for ($i = 0; $i < 23; $i++) {
-            $mult[$i]=((int)$fullStr[$i])*$VK[$i];
+            $mult[$i]=intval($fullStr[$i])*$VK[$i];
         }
         #Summing
         for ($i = 0; $i < 23; $i++) {
-            $summ += (int)str_split($mult[$i])[(count(str_split($mult[$i])) - 1)];
+            $summ += intval(str_split(strval($mult[$i]))[(count(str_split(strval($mult[$i]))) - 1)]);
         }
         #Second character
-        $secCh = (int)str_split($summ)[(count(str_split($summ)) - 1)];
+        $secCh = intval(str_split(strval($summ))[(count(str_split(strval($summ))) - 1)]);
         if (is_null($bic_check)) {
             $secCh = $secCh*3;
-            $secCh= (int)str_split($secCh)[(count(str_split($secCh)) - 1)];
+            $secCh= intval(str_split(strval($secCh))[(count(str_split(strval($secCh))) - 1)]);
             return $this->accCheck($newnum, $account, $secCh);
         } else {
             if ($currKey == $bic_check && $secCh == 0) {

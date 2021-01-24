@@ -2,7 +2,11 @@
 Implementation of Central Bank of Russia's logic in account keying, which allows validation of account numbers.
 
 # How to use
-
+Quite easy and obvious:
+```php
+(new \AccountKeying\AccountKeying)->accCheck('123456789', '12345678901234567890')
+```
+Aaaaand... That's it. It will return either `true` or `false`.
 
 # Algorithm as per CBR
                   ПОРЯДОК РАСЧЕТА КОНТРОЛЬНОГО КЛЮЧА
