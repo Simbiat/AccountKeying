@@ -8,10 +8,10 @@ class AccountKeying
     {
         #Validate values
         if (preg_match('/^[0-9]{9}$/', $newnum) !== 1) {
-            throw new \UnexpectedValueException('Wrong BIC format provided');
+            return false;
         }
-        if (preg_match('/^[0-9АВСЕНКМРТХавсенкмртх]{20}$/', $account) !== 1) {
-            throw new \UnexpectedValueException('Wrong account format provided');
+        if (preg_match('/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх]{1}[0-9]{14}$/', $account) !== 1) {
+            return false;
         }
         $VK = [7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1];
         $rkcNum = [];
