@@ -4,7 +4,7 @@ namespace AccountKeying;
 
 class AccountKeying
 {    
-    public function accCheck(string $newnum, string $account, $bic_check = null): bool
+    public function accCheck(string $newnum, string $account, $bic_check = null)
     {
         #Validate values
         if (preg_match('/^[0-9]{9}$/', $newnum) !== 1) {
@@ -69,7 +69,7 @@ class AccountKeying
             if ($currKey == $bic_check && $secCh == 0) {
                 return true;
             } else {
-                return false;
+                return $bic_check;
             }
         }
     }
