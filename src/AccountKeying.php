@@ -23,19 +23,20 @@ class AccountKeying
         $account_split = str_split(strtoupper($account));
         #Get current key
         $currKey = $account_split[8];
-        #Some special accounts can have letters in them (although I have not seen any myself)
-        switch($account_split[5]) {
-            case 'A': $account_split[5] = 0; break;
-            case 'B': $account_split[5] = 1; break;
-            case 'C': $account_split[5] = 2; break; 
-            case 'E': $account_split[5] = 3; break;
-            case 'H': $account_split[5] = 4; break;
-            case 'K': $account_split[5] = 5; break; 
-            case 'M': $account_split[5] = 6; break;
-            case 'P': $account_split[5] = 7; break;
-            case 'T': $account_split[5] = 8; break;
-            case 'X': $account_split[5] = 9; break; 
-        }
+        #Some special accounts can have letters in them (although I have not seen any myself). They need to be replaced with regulat numbers as per specification
+        $account_split[5] = match($account_split[5]) {
+            'A', 'а' => 0,
+            'B', 'в' => 1,
+            'C', 'с' => 2,
+            'E', 'е' => 3,
+            'H', 'н' => 4,
+            'K', 'к' => 5,
+            'M', 'м' => 6,
+            'P', 'р' => 7,
+            'T', 'т' => 8,
+            'X', 'х' => 9,
+            default => $account_split[5],
+        };
         #RKC
         if(intval($newnum_split[6].$newnum_split[7].$newnum_split[8]) <= 2) {
             $rkcNum[0] = 0;
