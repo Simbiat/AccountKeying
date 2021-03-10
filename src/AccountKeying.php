@@ -4,7 +4,7 @@ namespace AccountKeying;
 
 class AccountKeying
 {    
-    public function accCheck(string $newnum, string $account, $bic_check = null)
+    public function accCheck(string $newnum, string $account, ?int $bic_check = null): int|bool
     {
         #Validate values
         if (preg_match('/^[0-9]{9}$/', $newnum) !== 1) {
