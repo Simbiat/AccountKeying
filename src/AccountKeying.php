@@ -7,10 +7,10 @@ class AccountKeying
     public function accCheck(string $newnum, string $account, ?int $bic_check = null): int|bool
     {
         #Validate values
-        if (preg_match('/^[0-9]{9}$/', $newnum) !== 1) {
+        if (preg_match('/^[0-9]{9}$/', $newnum) === 0) {
             return false;
         }
-        if (preg_match('/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх]{1}[0-9]{14}$/', $account) !== 1) {
+        if (preg_match('/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх]{1}[0-9]{14}$/', $account) === 0) {
             return false;
         }
         $VK = [7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1];
