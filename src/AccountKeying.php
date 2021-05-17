@@ -3,19 +3,18 @@ declare(strict_types=1);
 namespace Simbiat;
 
 class AccountKeying
-{    
+{
     public function accCheck(string $newnum, string $account, ?int $bic_check = null): int|bool
     {
         #Validate values
         if (preg_match('/^[0-9]{9}$/', $newnum) !== 1) {
             return false;
         }
-        if (preg_match('/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх]{1}[0-9]{14}$/', $account) !== 1) {
+        if (preg_match('/^[0-9]{5}[0-9АВСЕНКМРТХавсенкмртх][0-9]{14}$/', $account) !== 1) {
             return false;
         }
         $VK = [7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1];
         $rkcNum = [];
-        $fullStr = [];
         $mult = [];
         $summ = 0;
         #Strings to arrays
@@ -75,4 +74,3 @@ class AccountKeying
         }
     }
 }
-?>
