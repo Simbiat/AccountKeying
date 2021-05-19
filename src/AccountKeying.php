@@ -1,8 +1,7 @@
 <?php
 declare(strict_types=1);
 namespace Simbiat;
-
-
+#test
 class AccountKeying
 {
     public function accCheck(string $newnum, string $account, ?int $bic_check = null): int|bool
