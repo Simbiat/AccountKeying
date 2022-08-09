@@ -4,7 +4,7 @@ namespace Simbiat;
 
 class AccountKeying
 {
-    public function accCheck(string $bic_num, string $account, ?int $bic_check = null): int|bool
+    public static function accCheck(string $bic_num, string $account, ?int $bic_check = null): int|bool
     {
         #Validate values
         if (preg_match('/^\d{9}$/', $bic_num) !== 1) {
@@ -64,7 +64,7 @@ class AccountKeying
         if (is_null($bic_check)) {
             $secCh = $secCh*3;
             $secCh= intval(str_split(strval($secCh))[(count(str_split(strval($secCh))) - 1)]);
-            return $this->accCheck($bic_num, $account, $secCh);
+            return self::accCheck($bic_num, $account, $secCh);
         } else {
             if ($currKey == $bic_check && $secCh == 0) {
                 return true;
