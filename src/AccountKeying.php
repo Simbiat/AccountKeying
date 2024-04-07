@@ -10,7 +10,7 @@ class AccountKeying
         if (preg_match('/^\d{9}$/', $bic_num) !== 1) {
             return false;
         }
-        if (preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/', $account) !== 1) {
+        if (preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
             return false;
         }
         $VK = [7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1,3,7,1];
@@ -18,8 +18,8 @@ class AccountKeying
         $multi = [];
         $sum = 0;
         #Strings to arrays
-        $bic_num_split = str_split($bic_num);
-        $account_split = str_split(strtoupper($account));
+        $bic_num_split = mb_str_split($bic_num, 1, 'UTF-8');
+        $account_split = mb_str_split(mb_strtoupper($account, 'UTF-8'), 1, 'UTF-8');
         #Get current key
         $currKey = $account_split[8];
         #Some special accounts can have letters in them (although I have not seen any myself). They need to be replaced with regular numbers as per specification
@@ -37,14 +37,14 @@ class AccountKeying
             default => $account_split[5],
         };
         #RKC
-        if(intval($bic_num_split[6].$bic_num_split[7].$bic_num_split[8]) <= 2) {
+        if((int)($bic_num_split[6].$bic_num_split[7].$bic_num_split[8]) <= 2) {
             $rkcNum[0] = 0;
-            $rkcNum[1] = intval($bic_num_split[4]);
-            $rkcNum[2] = intval($bic_num_split[5]);
+            $rkcNum[1] = (int)$bic_num_split[4];
+            $rkcNum[2] = (int)$bic_num_split[5];
         } else {
-            $rkcNum[0] = intval($bic_num_split[6]);
-            $rkcNum[1] = intval($bic_num_split[7]);
-            $rkcNum[2] = intval($bic_num_split[8]);
+            $rkcNum[0] = (int)$bic_num_split[6];
+            $rkcNum[1] = (int)$bic_num_split[7];
+            $rkcNum[2] = (int)$bic_num_split[8];
         }
         if (is_null($bic_check)) {
             $account_split[8] = 0;
@@ -53,24 +53,22 @@ class AccountKeying
         $fullStr = array_merge($rkcNum, $account_split);
         #Multiplication
         for ($i = 0; $i < 23; $i++) {
-            $multi[$i]=intval($fullStr[$i])*$VK[$i];
+            $multi[$i]= (int)$fullStr[ $i ] *$VK[$i];
         }
         #Summing
         for ($i = 0; $i < 23; $i++) {
-            $sum += intval(str_split(strval($multi[$i]))[(count(str_split(strval($multi[$i]))) - 1)]);
+            $sum += (int)mb_str_split((string)$multi[ $i ], 1, 'UTF-8')[ (count(mb_str_split((string)$multi[ $i ], 1, 'UTF-8')) - 1) ];
         }
         #Second character
-        $secCh = intval(str_split(strval($sum))[(count(str_split(strval($sum))) - 1)]);
+        $secCh = (int)mb_str_split((string)$sum, 1, 'UTF-8')[ (count(mb_str_split((string)$sum, 1, 'UTF-8')) - 1) ];
         if (is_null($bic_check)) {
-            $secCh = $secCh*3;
-            $secCh= intval(str_split(strval($secCh))[(count(str_split(strval($secCh))) - 1)]);
+            $secCh *= 3;
+            $secCh= (int)mb_str_split((string)$secCh, 1, 'UTF-8')[ (count(mb_str_split((string)$secCh, 1, 'UTF-8')) - 1) ];
             return self::accCheck($bic_num, $account, $secCh);
-        } else {
-            if ($currKey == $bic_check && $secCh == 0) {
-                return true;
-            } else {
-                return $bic_check;
-            }
         }
+        if ($currKey === (string)$bic_check && $secCh === 0) {
+            return true;
+        }
+        return $bic_check;
     }
 }
