@@ -7,7 +7,7 @@ Implementation of Central Bank of Russia's logic in account keying, which allows
 Quite easy and obvious:
 
 ```php
-\Simbiat\AccountKeying::accCheck('123456789', '12345678901234567890');
+\Simbiat\BIC\AccountKeying::accCheck('123456789', '12345678901234567890');
 ```
 
 That's it. It will return either `true` or `false`. First number is BIC number, the 2nd one - account you are checking.
