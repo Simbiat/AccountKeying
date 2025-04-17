@@ -11,7 +11,7 @@ use function count;
 class AccountKeying
 {
     /**
-     * Check if provided account belongs to respective bank code
+     * Check if a provided account belongs to a respective bank code
      *
      * @param int|string $bic_num Bank Identification Code
      * @param int|string $account Account number
@@ -33,7 +33,7 @@ class AccountKeying
         #Strings to arrays
         $bic_num_split = mb_str_split($bic_num, 1, 'UTF-8');
         $account_split = mb_str_split(mb_strtoupper($account, 'UTF-8'), 1, 'UTF-8');
-        #Get current key
+        #Get the current key
         $currKey = $account_split[8];
         #Some special accounts can have letters in them (although I have not seen any myself). They need to be replaced with regular numbers as per specification
         $account_split[5] = match ($account_split[5]) {
@@ -77,7 +77,7 @@ class AccountKeying
     
     /**
      * Generates RKC number in an array format based on BIC number
-     * @param array $bic_num_split BIC number split into array
+     * @param array $bic_num_split BIC number split into an array
      *
      * @return array
      */
