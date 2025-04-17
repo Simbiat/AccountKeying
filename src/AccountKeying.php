@@ -12,15 +12,22 @@ class AccountKeying
 {
     /**
      * Check if provided account belongs to respective bank code
+     *
+     * @param int|string $bic_num Bank Identification Code
+     * @param int|string $account Account number
+     * @param int|null   $bic_check
+     *
+     * @return int|bool
      */
-    public static function accCheck(string $bic_num, string $account, ?int $bic_check = null): int|bool
+    public static function accCheck(int|string $bic_num, int|string $account, ?int $bic_check = null): int|bool
     {
+        $bic_num = (string)$bic_num;
+        $account = (string)$account;
         #Validate values
         if (preg_match('/^\d{9}$/', $bic_num) !== 1 || preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
             return false;
         }
         $VK = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
-        $rkcNum = [];
         $multi = [];
         $sum = 0;
         #Strings to arrays
@@ -43,15 +50,7 @@ class AccountKeying
             default => $account_split[5],
         };
         #RKC
-        if ((int)($bic_num_split[6].$bic_num_split[7].$bic_num_split[8]) <= 2) {
-            $rkcNum[0] = 0;
-            $rkcNum[1] = (int)$bic_num_split[4];
-            $rkcNum[2] = (int)$bic_num_split[5];
-        } else {
-            $rkcNum[0] = (int)$bic_num_split[6];
-            $rkcNum[1] = (int)$bic_num_split[7];
-            $rkcNum[2] = (int)$bic_num_split[8];
-        }
+        $rkcNum = self::generateRKC($bic_num_split);
         if ($bic_check === null) {
             $account_split[8] = 0;
         }
@@ -74,6 +73,26 @@ class AccountKeying
             return true;
         }
         return $bic_check;
+    }
+    
+    /**
+     * Generates RKC number in an array format based on BIC number
+     * @param array $bic_num_split BIC number split into array
+     *
+     * @return array
+     */
+    private static function generateRKC(array $bic_num_split): array
+    {
+        if ((int)($bic_num_split[6].$bic_num_split[7].$bic_num_split[8]) <= 2) {
+            $rkcNum[0] = 0;
+            $rkcNum[1] = (int)$bic_num_split[4];
+            $rkcNum[2] = (int)$bic_num_split[5];
+        } else {
+            $rkcNum[0] = (int)$bic_num_split[6];
+            $rkcNum[1] = (int)$bic_num_split[7];
+            $rkcNum[2] = (int)$bic_num_split[8];
+        }
+        return $rkcNum;
     }
     
     /**
