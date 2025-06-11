@@ -27,7 +27,7 @@ class AccountKeying
         if (preg_match('/^\d{9}$/', $bic_num) !== 1 || preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
             return false;
         }
-        $VK = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
+        $vk = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
         $multi = [];
         $sum = 0;
         #Strings to arrays
@@ -58,7 +58,7 @@ class AccountKeying
         $fullStr = array_merge($rkcNum, $account_split);
         #Multiplication
         for ($i = 0; $i < 23; $i++) {
-            $multi[$i] = (int)$fullStr[$i] * $VK[$i];
+            $multi[$i] = (int)$fullStr[$i] * $vk[$i];
         }
         #Summing
         $sum = self::sumNumbers($multi, $sum);
