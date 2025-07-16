@@ -34,7 +34,7 @@ class AccountKeying
         $bic_num_split = mb_str_split($bic_num, 1, 'UTF-8');
         $account_split = mb_str_split(mb_strtoupper($account, 'UTF-8'), 1, 'UTF-8');
         #Get the current key
-        $currKey = $account_split[8];
+        $curr_key = $account_split[8];
         #Some special accounts can have letters in them (although I have not seen any myself). They need to be replaced with regular numbers as per specification
         $account_split[5] = match ($account_split[5]) {
             'A', 'а' => 0,
@@ -50,26 +50,26 @@ class AccountKeying
             default => $account_split[5],
         };
         #RKC
-        $rkcNum = self::generateRKC($bic_num_split);
+        $rkc_num = self::generateRKC($bic_num_split);
         if ($bic_check === null) {
             $account_split[8] = 0;
         }
         #Full string
-        $fullStr = array_merge($rkcNum, $account_split);
+        $full_str = array_merge($rkc_num, $account_split);
         #Multiplication
-        for ($i = 0; $i < 23; $i++) {
-            $multi[$i] = (int)$fullStr[$i] * $vk[$i];
+        for ($iteration = 0; $iteration < 23; $iteration++) {
+            $multi[$iteration] = (int)$full_str[$iteration] * $vk[$iteration];
         }
         #Summing
         $sum = self::sumNumbers($multi, $sum);
         #Second character
-        $secCh = (int)mb_str_split((string)$sum, 1, 'UTF-8')[(count(mb_str_split((string)$sum, 1, 'UTF-8')) - 1)];
+        $sec_ch = (int)mb_str_split((string)$sum, 1, 'UTF-8')[(count(mb_str_split((string)$sum, 1, 'UTF-8')) - 1)];
         if ($bic_check === null) {
-            $secCh *= 3;
-            $secCh = (int)mb_str_split((string)$secCh, 1, 'UTF-8')[(count(mb_str_split((string)$secCh, 1, 'UTF-8')) - 1)];
-            return self::accCheck($bic_num, $account, $secCh);
+            $sec_ch *= 3;
+            $sec_ch = (int)mb_str_split((string)$sec_ch, 1, 'UTF-8')[(count(mb_str_split((string)$sec_ch, 1, 'UTF-8')) - 1)];
+            return self::accCheck($bic_num, $account, $sec_ch);
         }
-        if ($currKey === (string)$bic_check && $secCh === 0) {
+        if ($curr_key === (string)$bic_check && $sec_ch === 0) {
             return true;
         }
         return $bic_check;
@@ -84,15 +84,15 @@ class AccountKeying
     private static function generateRKC(array $bic_num_split): array
     {
         if ((int)($bic_num_split[6].$bic_num_split[7].$bic_num_split[8]) <= 2) {
-            $rkcNum[0] = 0;
-            $rkcNum[1] = (int)$bic_num_split[4];
-            $rkcNum[2] = (int)$bic_num_split[5];
+            $rkc_num[0] = 0;
+            $rkc_num[1] = (int)$bic_num_split[4];
+            $rkc_num[2] = (int)$bic_num_split[5];
         } else {
-            $rkcNum[0] = (int)$bic_num_split[6];
-            $rkcNum[1] = (int)$bic_num_split[7];
-            $rkcNum[2] = (int)$bic_num_split[8];
+            $rkc_num[0] = (int)$bic_num_split[6];
+            $rkc_num[1] = (int)$bic_num_split[7];
+            $rkc_num[2] = (int)$bic_num_split[8];
         }
-        return $rkcNum;
+        return $rkc_num;
     }
     
     /**
@@ -103,8 +103,8 @@ class AccountKeying
      */
     private static function sumNumbers(array $multi, int $sum): int
     {
-        for ($i = 0; $i < 23; $i++) {
-            $sum += (int)mb_str_split((string)$multi[$i], 1, 'UTF-8')[(count(mb_str_split((string)$multi[$i], 1, 'UTF-8')) - 1)];
+        for ($iteration = 0; $iteration < 23; $iteration++) {
+            $sum += (int)mb_str_split((string)$multi[$iteration], 1, 'UTF-8')[(count(mb_str_split((string)$multi[$iteration], 1, 'UTF-8')) - 1)];
         }
         return $sum;
     }
