@@ -24,7 +24,7 @@ class AccountKeying
         $bic_num = (string)$bic_num;
         $account = (string)$account;
         #Validate values
-        if (preg_match('/^\d{9}$/', $bic_num) !== 1 || preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
+        if (\preg_match('/^\d{9}$/', $bic_num) !== 1 || \preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
             return false;
         }
         $vk = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
@@ -55,7 +55,7 @@ class AccountKeying
             $account_split[8] = 0;
         }
         #Full string
-        $full_str = array_merge($rkc_num, $account_split);
+        $full_str = \array_merge($rkc_num, $account_split);
         #Multiplication
         for ($iteration = 0; $iteration < 23; $iteration++) {
             $multi[$iteration] = (int)$full_str[$iteration] * $vk[$iteration];
