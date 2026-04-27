@@ -25,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Simbiat\\BIC\\": "src/"
+            "Simbiat\\BIC\\": ""
         }
     },
     "support": {
