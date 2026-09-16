@@ -1,5 +1,6 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Simbiat\BIC;
 
@@ -23,19 +24,19 @@ class AccountKeying
     {
         $bic_num = (string)$bic_num;
         $account = (string)$account;
-        #Validate values
+        // Validate values
         if (\preg_match('/^\d{9}$/', $bic_num) !== 1 || \preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
             return false;
         }
         $vk = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
         $multi = [];
         $sum = 0;
-        #Strings to arrays
+        // Strings to arrays
         $bic_num_split = mb_str_split($bic_num, 1, 'UTF-8');
         $account_split = mb_str_split(mb_strtoupper($account, 'UTF-8'), 1, 'UTF-8');
-        #Get the current key
+        // Get the current key
         $curr_key = $account_split[8];
-        #Some special accounts can have letters in them (although I have not seen any myself). They need to be replaced with regular numbers as per specification
+        // Some special accounts can have letters in them (although I have not seen any myself). They need to be replaced with regular numbers as per specification
         $account_split[5] = match ($account_split[5]) {
             'A', 'а' => 0,
             'B', 'в' => 1,
@@ -49,20 +50,20 @@ class AccountKeying
             'X', 'х' => 9,
             default => $account_split[5],
         };
-        #RKC
+        // RKC
         $rkc_num = self::generateRKC($bic_num_split);
         if ($bic_check === null) {
             $account_split[8] = 0;
         }
-        #Full string
+        // Full string
         $full_str = \array_merge($rkc_num, $account_split);
-        #Multiplication
+        // Multiplication
         for ($iteration = 0; $iteration < 23; $iteration++) {
             $multi[$iteration] = (int)$full_str[$iteration] * $vk[$iteration];
         }
-        #Summing
+        // Summing
         $sum = self::sumNumbers($multi, $sum);
-        #Second character
+        // Second character
         $sec_ch = (int)mb_str_split((string)$sum, 1, 'UTF-8')[(count(mb_str_split((string)$sum, 1, 'UTF-8')) - 1)];
         if ($bic_check === null) {
             $sec_ch *= 3;
@@ -74,7 +75,7 @@ class AccountKeying
         }
         return $bic_check;
     }
-    
+
     /**
      * Generates RKC number in an array format based on BIC number
      * @param array $bic_num_split BIC number split into an array
@@ -94,7 +95,7 @@ class AccountKeying
         }
         return $rkc_num;
     }
-    
+
     /**
      * Implementing sum operation for all digits of the key (step 3 of key generation and step 2 of key validation)
      * @param array $multi
