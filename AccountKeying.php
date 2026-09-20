@@ -4,19 +4,17 @@ declare(strict_types=1);
 
 namespace Simbiat\BIC;
 
-use function count;
-
 /**
  * Implementation of Central Bank of Russia's logic in account keying, which allows validation of account numbers.
  */
-class AccountKeying
+final class AccountKeying
 {
     /**
      * Check if a provided account belongs to a respective bank code
      *
-     * @param int|string $bic_num Bank Identification Code
-     * @param int|string $account Account number
-     * @param int|null   $bic_check
+     * @param int|string $bic_num   Bank Identification Code.
+     * @param int|string $account   Account number.
+     * @param int|null   $bic_check Pre-computed control digit. Calculated automatically, if null (default).
      *
      * @return int|bool
      */
@@ -25,7 +23,10 @@ class AccountKeying
         $bic_num = (string) $bic_num;
         $account = (string) $account;
         // Validate values
-        if (\preg_match('/^\d{9}$/', $bic_num) !== 1 || \preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1) {
+        if (
+            \preg_match('/^\d{9}$/', $bic_num) !== 1
+            || \preg_match('/^\d{5}[\dАВСЕНКМРТХавсенкмртх]\d{14}$/u', $account) !== 1
+        ) {
             return false;
         }
         $vk = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
@@ -64,26 +65,33 @@ class AccountKeying
         // Summing
         $sum = self::sumNumbers($multi, $sum);
         // Second character
-        $sec_ch = (int) \mb_str_split((string) $sum, 1, 'UTF-8')[(\count(\mb_str_split((string) $sum, 1, 'UTF-8')) - 1)];
+        $sec_ch = (int) \mb_str_split((string) $sum, 1, 'UTF-8')[\count(\mb_str_split((string) $sum, 1, 'UTF-8')) - 1];
         if ($bic_check === null) {
             $sec_ch *= 3;
-            $sec_ch = (int) \mb_str_split((string) $sec_ch, 1, 'UTF-8')[(\count(\mb_str_split((string) $sec_ch, 1, 'UTF-8')) - 1)];
+            $sec_ch = (int) \mb_str_split((string) $sec_ch, 1, 'UTF-8')[\count(\mb_str_split((string) $sec_ch, 1, 'UTF-8')) - 1];
+
             return self::accCheck($bic_num, $account, $sec_ch);
         }
-        if ($curr_key === (string) $bic_check && $sec_ch === 0) {
+        if (
+            $curr_key === (string) $bic_check
+            && $sec_ch === 0
+        ) {
             return true;
         }
+
         return $bic_check;
     }
 
     /**
      * Generates RKC number in an array format based on BIC number
-     * @param array $bic_num_split BIC number split into an array
      *
-     * @return array
+     * @param array<string> $bic_num_split BIC number split into an array
+     *
+     * @return array<int>
      */
     private static function generateRKC(array $bic_num_split): array
     {
+        $rkc_num = [];
         if ((int) ($bic_num_split[6].$bic_num_split[7].$bic_num_split[8]) <= 2) {
             $rkc_num[0] = 0;
             $rkc_num[1] = (int) $bic_num_split[4];
@@ -93,20 +101,24 @@ class AccountKeying
             $rkc_num[1] = (int) $bic_num_split[7];
             $rkc_num[2] = (int) $bic_num_split[8];
         }
+
         return $rkc_num;
     }
 
     /**
      * Implementing sum operation for all digits of the key (step 3 of key generation and step 2 of key validation)
-     * @param array $multi
-     * @param int   $sum
+     *
+     * @param array<int> $multi
+     * @param int        $sum
+     *
      * @return int
      */
     private static function sumNumbers(array $multi, int $sum): int
     {
         for ($iteration = 0; $iteration < 23; $iteration++) {
-            $sum += (int) \mb_str_split((string) $multi[$iteration], 1, 'UTF-8')[(\count(\mb_str_split((string) $multi[$iteration], 1, 'UTF-8')) - 1)];
+            $sum += (int) \mb_str_split((string) $multi[$iteration], 1, 'UTF-8')[\count(\mb_str_split((string) $multi[$iteration], 1, 'UTF-8')) - 1];
         }
+
         return $sum;
     }
 }
