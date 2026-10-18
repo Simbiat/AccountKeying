@@ -10,15 +10,15 @@ namespace Simbiat\BIC;
 final class AccountKeying
 {
     /**
-     * Check if a provided account belongs to a respective bank code
+     * Check if a provided account belongs to a respective bank code.
      *
      * @param int|string $bic_num   Bank Identification Code.
      * @param int|string $account   Account number.
-     * @param int|null   $bic_check Pre-computed control digit. Calculated automatically, if null (default).
+     * @param null|int   $bic_check Pre-computed control digit. Calculated automatically, if null (default).
      *
-     * @return int|bool
+     * @return bool|int
      */
-    public static function accCheck(int|string $bic_num, int|string $account, ?int $bic_check = null): int|bool
+    public static function accCheck(int|string $bic_num, int|string $account, ?int $bic_check = null): bool|int
     {
         $bic_num = (string) $bic_num;
         $account = (string) $account;
@@ -59,7 +59,7 @@ final class AccountKeying
         // Full string
         $full_str = \array_merge($rkc_num, $account_split);
         // Multiplication
-        for ($iteration = 0; $iteration < 23; $iteration++) {
+        for ($iteration = 0; $iteration < 23; ++$iteration) {
             $multi[$iteration] = (int) $full_str[$iteration] * $vk[$iteration];
         }
         // Summing
@@ -83,7 +83,7 @@ final class AccountKeying
     }
 
     /**
-     * Generates RKC number in an array format based on BIC number
+     * Generates RKC number in an array format based on BIC number.
      *
      * @param array<string> $bic_num_split BIC number split into an array
      *
@@ -106,7 +106,7 @@ final class AccountKeying
     }
 
     /**
-     * Implementing sum operation for all digits of the key (step 3 of key generation and step 2 of key validation)
+     * Implementing sum operation for all digits of the key (step 3 of key generation and step 2 of key validation).
      *
      * @param array<int> $multi
      * @param int        $sum
@@ -115,7 +115,7 @@ final class AccountKeying
      */
     private static function sumNumbers(array $multi, int $sum): int
     {
-        for ($iteration = 0; $iteration < 23; $iteration++) {
+        for ($iteration = 0; $iteration < 23; ++$iteration) {
             $sum += (int) \mb_str_split((string) $multi[$iteration], 1, 'UTF-8')[\count(\mb_str_split((string) $multi[$iteration], 1, 'UTF-8')) - 1];
         }
 
