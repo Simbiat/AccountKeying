@@ -29,6 +29,7 @@ final class AccountKeying
         ) {
             return false;
         }
+
         $vk = [7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1, 3, 7, 1];
         $multi = [];
         $sum = 0;
@@ -56,12 +57,14 @@ final class AccountKeying
         if ($bic_check === null) {
             $account_split[8] = 0;
         }
+
         // Full string
         $full_str = \array_merge($rkc_num, $account_split);
         // Multiplication
         for ($iteration = 0; $iteration < 23; ++$iteration) {
             $multi[$iteration] = (int) $full_str[$iteration] * $vk[$iteration];
         }
+
         // Summing
         $sum = self::sumNumbers($multi, $sum);
         // Second character
@@ -72,6 +75,7 @@ final class AccountKeying
 
             return self::accCheck($bic_num, $account, $sec_ch);
         }
+
         if (
             $curr_key === (string) $bic_check
             && $sec_ch === 0
