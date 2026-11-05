@@ -14,7 +14,7 @@ final class AccountKeying
      *
      * @param int|string $bic_num   Bank Identification Code.
      * @param int|string $account   Account number.
-     * @param null|int   $bic_check Pre-computed control digit. Calculated automatically, if null (default).
+     * @param int|null   $bic_check Pre-computed control digit. Calculated automatically, if null (default).
      *
      * @return bool|int
      */
